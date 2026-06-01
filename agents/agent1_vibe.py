@@ -89,9 +89,7 @@ def vibe_mas_cercana(vibes_detectadas: list) -> str:
 
 if __name__ == "__main__":
     descripcion = """
-    Estaba viendo TikTok y vi una animación de una princesa a la que van 
-    a casar por el reino pero está triste, voltea a ver a su bufón que 
-    la mira con rabia.
+    Me agrada la canción de the devil doesn't bargain con su ritmo melancólico y letra cargada de resentimiento.
     """
     
     print("🌿 Analizando vibe...\n")
