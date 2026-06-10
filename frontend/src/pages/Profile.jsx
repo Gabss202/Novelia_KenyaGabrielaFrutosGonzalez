@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
-const API = 'https://fantastic-garbanzo-r47j5ppj6x6xf5w9-8000.app.github.dev';
+import API from '../config';
 
 const Profile = () => {
   const [resumen, setResumen] = useState(null);
@@ -33,33 +32,44 @@ const Profile = () => {
     navigate('/login');
   };
 
+  const vibeEmoji = {
+    melancolico: '🌧️', romantico: '🌹', misterioso: '🌙',
+    cozy: '☕', aventurero: '🗺️', oscuro: '🖤', esperanzador: '🌟'
+  };
+
   return (
-    <div style={{ padding: '24px 16px 100px' }}>
+    <div style={{ padding: '24px 16px 100px', maxWidth: '480px', margin: '0 auto' }}>
+
       {/* Header perfil */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '28px' }}>
-        <div style={{
-          width: '72px', height: '72px', borderRadius: '50%',
-          background: 'var(--accent)', display: 'flex',
-          alignItems: 'center', justifyContent: 'center',
-          fontSize: '28px', color: 'var(--bg-primary)', fontWeight: 'bold'
-        }}>
-          {username?.charAt(0).toUpperCase()}
-        </div>
-        <div>
-          <p style={{ fontSize: '20px', fontWeight: 'bold' }}>{username}</p>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>@{username}</p>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <div style={{
+            width: '68px', height: '68px', borderRadius: '50%',
+            background: 'linear-gradient(135deg, var(--accent), #8B6914)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '26px', color: 'var(--bg-primary)', fontWeight: 'bold',
+            flexShrink: 0
+          }}>
+            {username?.charAt(0).toUpperCase()}
+          </div>
+          <div>
+            <p style={{ fontSize: '20px', fontWeight: 'bold' }}>{username}</p>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>@{username?.toLowerCase()}</p>
+          </div>
         </div>
       </div>
 
-      {cargando && <p style={{ color: 'var(--text-muted)', textAlign: 'center' }}>Cargando...</p>}
+      {cargando && (
+        <div style={{ textAlign: 'center', marginTop: '60px' }}>
+          <p style={{ fontSize: '32px', marginBottom: '12px' }}>📚</p>
+          <p style={{ color: 'var(--text-muted)' }}>Cargando tu perfil...</p>
+        </div>
+      )}
 
       {resumen && (
         <>
-          {/* Estadísticas */}
-          <div style={{
-            display: 'grid', gridTemplateColumns: '1fr 1fr',
-            gap: '12px', marginBottom: '24px'
-          }}>
+          {/* Stats grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '20px' }}>
             {[
               { label: 'Libros leídos', valor: resumen.estadisticas.libros_leidos, emoji: '📚' },
               { label: 'Calificación promedio', valor: resumen.estadisticas.rating_promedio || '—', emoji: '⭐' },
@@ -67,50 +77,66 @@ const Profile = () => {
               { label: 'Por leer', valor: resumen.estadisticas.quiero_leer, emoji: '🔖' },
             ].map(stat => (
               <div key={stat.label} style={{
-                background: 'var(--bg-card)', borderRadius: '16px',
-                padding: '16px', textAlign: 'center'
+                background: 'var(--bg-card)', borderRadius: '18px',
+                padding: '18px', textAlign: 'center',
+                border: '1px solid var(--border)'
               }}>
-                <p style={{ fontSize: '28px', marginBottom: '4px' }}>{stat.emoji}</p>
-                <p style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--accent)' }}>{stat.valor}</p>
-                <p style={{ color: 'var(--text-muted)', fontSize: '12px' }}>{stat.label}</p>
+                <p style={{ fontSize: '26px', marginBottom: '6px' }}>{stat.emoji}</p>
+                <p style={{ fontSize: '26px', fontWeight: 'bold', color: 'var(--accent)', marginBottom: '4px' }}>
+                  {stat.valor}
+                </p>
+                <p style={{ color: 'var(--text-muted)', fontSize: '11px' }}>{stat.label}</p>
               </div>
             ))}
           </div>
 
           {/* Vibe favorito */}
           <div style={{
-            background: 'var(--bg-card)', borderRadius: '16px',
-            padding: '16px', marginBottom: '16px'
+            background: 'var(--bg-card)', borderRadius: '18px',
+            padding: '18px', marginBottom: '14px',
+            border: '1px solid var(--border)',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between'
           }}>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '4px' }}>Tu vibe favorito</p>
-            <p style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--accent)', textTransform: 'capitalize' }}>
-              ✨ {resumen.vibe_favorito}
-            </p>
+            <div>
+              <p style={{ color: 'var(--text-muted)', fontSize: '12px', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                Tu vibe favorito
+              </p>
+              <p style={{ fontSize: '18px', fontWeight: 'bold', color: 'var(--accent)', textTransform: 'capitalize' }}>
+                {resumen.vibe_favorito}
+              </p>
+            </div>
+            <span style={{ fontSize: '36px' }}>
+              {vibeEmoji[resumen.vibe_favorito] || '✨'}
+            </span>
           </div>
 
-          {/* Inferencias del perfil */}
+          {/* Análisis perfil */}
           <div style={{
-            background: 'var(--bg-card)', borderRadius: '16px',
-            padding: '16px', marginBottom: '16px'
+            background: 'var(--bg-card)', borderRadius: '18px',
+            padding: '18px', marginBottom: '14px',
+            border: '1px solid var(--border)'
           }}>
-            <p style={{ fontWeight: 'bold', marginBottom: '12px', color: 'var(--accent)' }}>
+            <p style={{ fontWeight: 'bold', marginBottom: '14px', color: 'var(--accent)', fontSize: '14px' }}>
               🧠 Análisis de tu perfil lector
             </p>
             {resumen.inferencias_perfil.map((inf, i) => (
               <div key={i} style={{
-                display: 'flex', alignItems: 'flex-start', gap: '8px',
-                marginBottom: '8px'
+                display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '10px'
               }}>
-                <span style={{ color: 'var(--accent)', marginTop: '2px' }}>•</span>
+                <span style={{
+                  width: '6px', height: '6px', borderRadius: '50%',
+                  background: 'var(--accent)', flexShrink: 0, marginTop: '6px'
+                }} />
                 <p style={{ color: 'var(--text-secondary)', fontSize: '13px', lineHeight: '1.5' }}>{inf}</p>
               </div>
             ))}
           </div>
 
-          {/* Total reseñas */}
+          {/* Reseñas */}
           <div style={{
-            background: 'var(--bg-card)', borderRadius: '16px',
-            padding: '16px', marginBottom: '24px',
+            background: 'var(--bg-card)', borderRadius: '18px',
+            padding: '18px', marginBottom: '24px',
+            border: '1px solid var(--border)',
             display: 'flex', alignItems: 'center', justifyContent: 'space-between'
           }}>
             <div>
@@ -121,14 +147,39 @@ const Profile = () => {
             </div>
             <span style={{ fontSize: '32px' }}>✍️</span>
           </div>
+
+          {/* Configuración */}
+          <div style={{
+            background: 'var(--bg-card)', borderRadius: '18px',
+            border: '1px solid var(--border)', marginBottom: '16px', overflow: 'hidden'
+          }}>
+            {[
+              { label: 'Actividad reciente', emoji: '📊' },
+              { label: 'Estadísticas', emoji: '📈' },
+              { label: 'Retos de lectura', emoji: '🏆' },
+            ].map((item, i) => (
+              <div key={item.label} style={{
+                padding: '16px 18px', display: 'flex', alignItems: 'center',
+                justifyContent: 'space-between',
+                borderBottom: i < 2 ? '1px solid var(--border)' : 'none',
+                cursor: 'pointer'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <span style={{ fontSize: '18px' }}>{item.emoji}</span>
+                  <p style={{ fontSize: '14px' }}>{item.label}</p>
+                </div>
+                <span style={{ color: 'var(--text-muted)' }}>›</span>
+              </div>
+            ))}
+          </div>
         </>
       )}
 
       {/* Cerrar sesión */}
       <button onClick={cerrarSesion} style={{
         width: '100%', background: 'none',
-        border: '1px solid #e07070', borderRadius: '12px',
-        padding: '14px', color: '#e07070',
+        border: '1px solid #c0635a', borderRadius: '14px',
+        padding: '14px', color: '#c0635a',
         fontSize: '15px', cursor: 'pointer', fontWeight: 'bold'
       }}>
         Cerrar sesión
