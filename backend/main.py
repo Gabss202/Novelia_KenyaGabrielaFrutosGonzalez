@@ -215,3 +215,5 @@ def resumen_perfil(usuario=Depends(obtener_usuario_actual), db: Session = Depend
 @app.get("/")
 def root():
     return {"mensaje": "Novelia API funcionando 🎉"}
+
+    hola quiero morir
