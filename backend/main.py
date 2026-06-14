@@ -133,7 +133,7 @@ def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get
     if not usuario or not pwd_context.verify(form.password, usuario.password_hash):
         raise HTTPException(status_code=401, detail="Credenciales incorrectas")
     token = crear_token({"sub": usuario.username})
-    return {"access_token": token, "token_type": "bearer"}
+    return {"access_token": token, "token_type": "bearer", "username": usuario.username, "email": usuario.email}
 
 @app.post("/recuperar-password")
 def recuperar_password(datos: RecuperarPassword, db: Session = Depends(get_db)):

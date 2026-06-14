@@ -78,7 +78,7 @@ const Library = () => {
           borderRadius: '14px', padding: '12px 14px', marginBottom: '16px',
           color: 'var(--accent)', fontSize: '14px', lineHeight: '1.5'
         }}>
-          🧠 {mensajeSistema}
+          {mensajeSistema}
         </div>
       )}
 
@@ -110,7 +110,7 @@ const Library = () => {
 
       {cargando && (
         <div style={{ textAlign: 'center', marginTop: '60px' }}>
-          <p style={{ fontSize: '32px', marginBottom: '12px' }}>📚</p>
+          <p style={{ fontSize: '32px', marginBottom: '12px' }}>Biblioteca</p>
           <p style={{ color: 'var(--text-muted)' }}>Cargando biblioteca...</p>
         </div>
       )}
@@ -118,7 +118,7 @@ const Library = () => {
       {!cargando && librosActuales.length === 0 && (
         <div style={{ textAlign: 'center', marginTop: '60px' }}>
           <p style={{ fontSize: '48px', marginBottom: '16px' }}>
-            {tab === 'leyendo' ? '📖' : tab === 'quiero_leer' ? '🔖' : '✅'}
+            {tab === 'leyendo' ? 'Leyendo' : tab === 'quiero_leer' ? 'Por leer' : 'Leídos'}
           </p>
           <p style={{ color: 'var(--text-muted)', fontSize: '15px' }}>
             {tab === 'leyendo' ? 'No estás leyendo nada aún' :
@@ -146,7 +146,7 @@ const Library = () => {
               width: '70px', height: '100px', borderRadius: '10px',
               background: 'var(--bg-modal)', flexShrink: 0,
               display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px'
-            }}>📚</div>
+            }}>LIB</div>
           )}
 
           <div style={{ flex: 1 }}>
@@ -196,7 +196,7 @@ const Library = () => {
                 border: 'none', borderRadius: '10px', padding: '8px 14px',
                 fontSize: '12px', cursor: 'pointer', fontWeight: 'bold'
               }}>
-                ✍️ Escribir reseña
+                Escribir reseña
               </button>
             )}
           </div>
@@ -230,7 +230,7 @@ const Library = () => {
                   width: '70px', height: '100px', borderRadius: '10px',
                   background: 'var(--bg-card)', flexShrink: 0,
                   display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px'
-                }}>📚</div>
+                }}>LIB</div>
               )}
               <div>
                 <p style={{ fontWeight: 'bold', fontSize: '15px', marginBottom: '4px' }}>{modalResena.titulo}</p>
@@ -280,7 +280,7 @@ const Library = () => {
                 color: 'var(--accent)', fontSize: '14px', fontStyle: 'italic',
                 lineHeight: '1.5'
               }}>
-                ✨ {mensajeIA}
+                {mensajeIA}
               </div>
             )}
 

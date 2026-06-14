@@ -81,8 +81,8 @@ const Profile = () => {
   };
 
   const vibeEmoji = {
-    melancolico: '🌧️', romantico: '🌹', misterioso: '🌙',
-    cozy: '☕', aventurero: '🗺️', oscuro: '🖤', esperanzador: '🌟'
+    melancolico: 'Mel', romantico: 'Rom', misterioso: 'Mis',
+    cozy: 'Cozy', aventurero: 'Aven', oscuro: 'Osc', esperanzador: 'Esp'
   };
 
   const retosCompletados = resumen?.retos?.filter(reto => reto.progreso >= 100).length || 0;
@@ -123,7 +123,7 @@ const Profile = () => {
 
       {cargando && (
         <div style={{ textAlign: 'center', marginTop: '60px' }}>
-          <p style={{ fontSize: '32px', marginBottom: '12px' }}>📚</p>
+          <p style={{ fontSize: '32px', marginBottom: '12px' }}>Perfil</p>
           <p style={{ color: 'var(--text-muted)' }}>Cargando tu perfil...</p>
         </div>
       )}
@@ -140,9 +140,9 @@ const Profile = () => {
             </p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
               {[
-                { label: 'Racha', valor: `${resumen.estadisticas.racha_lectura} días`, emoji: '🔥' },
-                { label: 'Actividad', valor: resumen.estadisticas.actividad_total, emoji: '📈' },
-                { label: 'Última vez', valor: formatearFecha(resumen.ultima_actividad), emoji: '🕒' },
+                { label: 'Racha', valor: `${resumen.estadisticas.racha_lectura} días`, emoji: '' },
+                { label: 'Actividad', valor: resumen.estadisticas.actividad_total, emoji: '' },
+                { label: 'Última vez', valor: formatearFecha(resumen.ultima_actividad), emoji: '' },
               ].map(item => (
                 <div key={item.label} style={{
                   background: 'var(--bg-modal)', borderRadius: '14px',
@@ -164,14 +164,14 @@ const Profile = () => {
           {/* Stats grid */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '20px' }}>
             {[
-              { label: 'Libros leídos', valor: resumen.estadisticas.libros_leidos, emoji: '📚' },
-              { label: 'Calificación promedio', valor: resumen.estadisticas.rating_promedio || '—', emoji: '⭐' },
-              { label: 'Leyendo ahora', valor: resumen.estadisticas.leyendo_ahora, emoji: '📖' },
-              { label: 'Por leer', valor: resumen.estadisticas.quiero_leer, emoji: '🔖' },
-              { label: 'Racha', valor: resumen.estadisticas.racha_lectura, emoji: '🔥' },
-              { label: 'Días activos 30', valor: resumen.estadisticas.dias_activos_30, emoji: '📅' },
-              { label: 'Nivel lector', valor: resumen.nivel_lector || 'Inicial', emoji: '🧭' },
-              { label: 'Progreso semanal', valor: `${resumen.estadisticas.progreso_semanal || 0}%`, emoji: '⏳' },
+              { label: 'Libros leídos', valor: resumen.estadisticas.libros_leidos, emoji: '' },
+              { label: 'Calificación promedio', valor: resumen.estadisticas.rating_promedio || '—', emoji: '' },
+              { label: 'Leyendo ahora', valor: resumen.estadisticas.leyendo_ahora, emoji: '' },
+              { label: 'Por leer', valor: resumen.estadisticas.quiero_leer, emoji: '' },
+              { label: 'Racha', valor: resumen.estadisticas.racha_lectura, emoji: '' },
+              { label: 'Días activos 30', valor: resumen.estadisticas.dias_activos_30, emoji: '' },
+              { label: 'Nivel lector', valor: resumen.nivel_lector || 'Inicial', emoji: '' },
+              { label: 'Progreso semanal', valor: `${resumen.estadisticas.progreso_semanal || 0}%`, emoji: '' },
             ].map(stat => (
               <div key={stat.label} style={{
                 background: 'var(--bg-card)', borderRadius: '18px',
@@ -309,7 +309,7 @@ const Profile = () => {
               border: '1px solid var(--border)'
             }}>
               <p style={{ fontWeight: 'bold', marginBottom: '14px', color: 'var(--accent)', fontSize: '14px' }}>
-                ⚡ Actividad reciente
+                Actividad reciente
               </p>
               {resumen.actividad_reciente.map((actividad, index) => (
                 <div key={`${actividad.fecha}-${index}`} style={{ marginBottom: index < resumen.actividad_reciente.length - 1 ? '10px' : '0' }}>
@@ -336,7 +336,7 @@ const Profile = () => {
               </p>
             </div>
             <span style={{ fontSize: '36px' }}>
-              {vibeEmoji[resumen.vibe_favorito] || '✨'}
+              {vibeEmoji[resumen.vibe_favorito] || 'Vibe'}
             </span>
           </div>
 
@@ -347,7 +347,7 @@ const Profile = () => {
             border: '1px solid var(--border)'
           }}>
             <p style={{ fontWeight: 'bold', marginBottom: '14px', color: 'var(--accent)', fontSize: '14px' }}>
-              🧠 Análisis de tu perfil lector
+              Análisis de tu perfil lector
             </p>
             {resumen.inferencias_perfil.map((inf, i) => (
               <div key={i} style={{
@@ -375,7 +375,7 @@ const Profile = () => {
                 {resumen.estadisticas.total_reseñas} reseñas publicadas
               </p>
             </div>
-            <span style={{ fontSize: '32px' }}>✍️</span>
+            <span style={{ fontSize: '32px' }}>Reseñas</span>
           </div>
 
           {/* Configuración */}
@@ -384,9 +384,9 @@ const Profile = () => {
             border: '1px solid var(--border)', marginBottom: '16px', overflow: 'hidden'
           }}>
             {[
-              { label: 'Actividad reciente', emoji: '📊' },
-              { label: 'Estadísticas', emoji: '📈' },
-              { label: 'Retos de lectura', emoji: '🏆' },
+              { label: 'Actividad reciente', emoji: '' },
+              { label: 'Estadísticas', emoji: '' },
+              { label: 'Retos de lectura', emoji: '' },
             ].map((item, i) => (
               <div key={item.label} style={{
                 padding: '16px 18px', display: 'flex', alignItems: 'center',

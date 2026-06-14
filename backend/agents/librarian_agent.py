@@ -54,15 +54,18 @@ class LibrarianAgent:
         if existente:
             # Actualizar estado
             existente.estado = estado
+            if estado == "leido" and existente.progreso < 100:
+                existente.progreso = 100
             self.db.commit()
             accion = "actualizado"
         else:
             # Agregar nuevo
+            progreso_inicial = 100 if estado == "leido" else 0
             entrada = Biblioteca(
                 usuario_id=usuario_id,
                 libro_id=libro_data["id"],
                 estado=estado,
-                progreso=0,
+                progreso=progreso_inicial,
                 fecha_agregado=datetime.utcnow()
             )
             self.db.add(entrada)

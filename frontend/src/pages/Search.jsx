@@ -1,25 +1,25 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import API from '../config';
 
 const vibes = [
-  { label: 'Cozy', emoji: '☕', color: '#8B6914' },
-  { label: 'Nostálgica', emoji: '🍂', color: '#7D4E2D' },
-  { label: 'Misteriosa', emoji: '🌙', color: '#3D3560' },
-  { label: 'Romántica', emoji: '🌹', color: '#7D2D3F' },
-  { label: 'Aventurera', emoji: '🗺️', color: '#2D5A3F' },
-  { label: 'Oscura', emoji: '🖤', color: '#2D2D2D' },
-  { label: 'Esperanzadora', emoji: '🌟', color: '#6B5A2D' },
-  { label: 'Melancólica', emoji: '🌧️', color: '#2D4A6B' },
+  { label: 'Cozy', color: '#8B6914' },
+  { label: 'Nostálgica', color: '#7D4E2D' },
+  { label: 'Misteriosa', color: '#3D3560' },
+  { label: 'Romántica', color: '#7D2D3F' },
+  { label: 'Aventurera', color: '#2D5A3F' },
+  { label: 'Oscura', color: '#2D2D2D' },
+  { label: 'Esperanzadora', color: '#6B5A2D' },
+  { label: 'Melancólica', color: '#2D4A6B' },
 ];
 
 const generos = [
-  { label: 'Fantasía', emoji: '🐉' },
-  { label: 'Romance', emoji: '💕' },
-  { label: 'Ficción', emoji: '✍️' },
-  { label: 'Misterio', emoji: '🔍' },
-  { label: 'Terror', emoji: '👻' },
-  { label: 'Sci-Fi', emoji: '🚀' },
+  { label: 'Fantasía' },
+  { label: 'Romance' },
+  { label: 'Ficción' },
+  { label: 'Misterio' },
+  { label: 'Terror' },
+  { label: 'Sci-Fi' },
 ];
 
 const Search = () => {
@@ -31,9 +31,29 @@ const Search = () => {
   const [libroSeleccionado, setLibroSeleccionado] = useState(null);
   const [vibeActivo, setVibeActivo] = useState(null);
   const [estadosGuardados, setEstadosGuardados] = useState({});
+  const [bibliotecaCargando, setBibliotecaCargando] = useState(true);
 
   const token = localStorage.getItem('token');
   const headers = { Authorization: `Bearer ${token}` };
+
+  useEffect(() => {
+    cargarEstadosBiblioteca();
+  }, []);
+
+  const cargarEstadosBiblioteca = async () => {
+    setBibliotecaCargando(true);
+    try {
+      const res = await axios.get(`${API}/biblioteca`, { headers });
+      const estados = {};
+      res.data?.leyendo?.forEach(libro => { estados[libro.id] = 'leyendo'; });
+      res.data?.quiero_leer?.forEach(libro => { estados[libro.id] = 'quiero_leer'; });
+      res.data?.leidos?.forEach(libro => { estados[libro.id] = 'leido'; });
+      setEstadosGuardados(estados);
+    } catch (e) {
+      console.error(e);
+    }
+    setBibliotecaCargando(false);
+  };
 
   const buscar = async (texto) => {
     setCargando(true);
@@ -71,7 +91,7 @@ const Search = () => {
       const res = await axios.post(`${API}/biblioteca/agregar`, { libro, estado }, { headers });
       const mensaje = res.data?.mensaje || `"${libro.titulo}" agregado`;
       setMensajeGuardado(res.data?.sugerencia ? `${mensaje}. ${res.data.sugerencia}` : mensaje);
-      setEstadosGuardados(prev => ({ ...prev, [libro.id]: estado }));
+      await cargarEstadosBiblioteca();
       setLibroSeleccionado(null);
       setTimeout(() => setMensajeGuardado(''), 3000);
     } catch (e) {
@@ -101,7 +121,7 @@ const Search = () => {
           background: 'var(--accent)', color: 'var(--bg-primary)',
           border: 'none', borderRadius: '14px', padding: '13px 18px',
           fontSize: '16px', cursor: 'pointer'
-        }}>🔍</button>
+        }}>Buscar</button>
       </div>
 
       {!resultados.length && !cargando && (
@@ -149,7 +169,7 @@ const Search = () => {
 
       {cargando && (
         <div style={{ textAlign: 'center', marginTop: '60px' }}>
-          <p style={{ fontSize: '32px', marginBottom: '12px' }}>✨</p>
+          <p style={{ fontSize: '32px', marginBottom: '12px' }}>Buscando</p>
           <p style={{ color: 'var(--text-muted)' }}>Buscando libros perfectos para ti...</p>
         </div>
       )}
@@ -159,7 +179,7 @@ const Search = () => {
           background: 'var(--bg-card)', border: '1px solid var(--accent)',
           borderRadius: '14px', padding: '12px', marginBottom: '16px',
           color: 'var(--accent)', fontSize: '14px', textAlign: 'center'
-        }}>✅ {mensajeGuardado}</div>
+        }}>{mensajeGuardado}</div>
       )}
 
       {resultados.length > 0 && (
@@ -181,7 +201,7 @@ const Search = () => {
               border: '1px solid var(--border)'
             }}>
               <p style={{ color: 'var(--accent)', fontWeight: 'bold', fontSize: '13px', marginBottom: '8px' }}>
-                🧠 Por qué estas recomendaciones
+                Por qué estas recomendaciones
               </p>
               <p style={{ color: 'var(--text-secondary)', fontSize: '13px', lineHeight: '1.5', marginBottom: '10px' }}>
                 {analisisVibe.explicacion || 'El sistema detectó señales suficientes para ajustar géneros y priorizar libros afines.'}
@@ -221,7 +241,7 @@ const Search = () => {
                   width: '65px', height: '95px', borderRadius: '8px',
                   background: 'var(--bg-modal)', flexShrink: 0,
                   display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px'
-                }}>📚</div>
+                }}>LIB</div>
               )}
               <div style={{ flex: 1 }}>
                 <p style={{ fontWeight: 'bold', fontSize: '14px', marginBottom: '4px', lineHeight: '1.3' }}>{libro.titulo}</p>
@@ -233,10 +253,10 @@ const Search = () => {
                 )}
                 <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                   <button onClick={e => { e.stopPropagation(); agregarBiblioteca(libro, 'quiero_leer'); }} style={btnSmall}>
-                    🔖 Quiero leer
+                    Quiero leer
                   </button>
                   <button onClick={e => { e.stopPropagation(); agregarBiblioteca(libro, 'leyendo'); }} style={btnSmall}>
-                    📖 Leyendo
+                    Leyendo
                   </button>
                 </div>
               </div>
@@ -271,7 +291,7 @@ const Search = () => {
                   width: '90px', height: '130px', borderRadius: '12px',
                   background: 'var(--bg-card)', flexShrink: 0,
                   display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '32px'
-                }}>📚</div>
+                }}>LIB</div>
               )}
               <div>
                 <p style={{ fontWeight: 'bold', fontSize: '17px', marginBottom: '6px', lineHeight: '1.3' }}>{libroSeleccionado.titulo}</p>
@@ -287,13 +307,13 @@ const Search = () => {
             </p>
             <div style={{ display: 'flex', gap: '10px' }}>
               <button onClick={() => agregarBiblioteca(libroSeleccionado, 'quiero_leer')} style={estadoBoton(estadosGuardados[libroSeleccionado.id] === 'quiero_leer')}>
-                🔖 Quiero leer
+                Quiero leer
               </button>
               <button onClick={() => agregarBiblioteca(libroSeleccionado, 'leyendo')} style={estadoBoton(estadosGuardados[libroSeleccionado.id] === 'leyendo')}>
-                📖 Leyendo
+                Leyendo
               </button>
               <button onClick={() => agregarBiblioteca(libroSeleccionado, 'leido')} style={estadoBoton(estadosGuardados[libroSeleccionado.id] === 'leido', true)}>
-                ✅ Leído
+                Leído
               </button>
             </div>
           </div>

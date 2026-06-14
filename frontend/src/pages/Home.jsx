@@ -16,6 +16,7 @@ const Home = () => {
   const [estadosGuardados, setEstadosGuardados] = useState({});
   const [populares, setPopulares] = useState([]);
   const [popularesCargando, setPopularesCargando] = useState(true);
+  const [bibliotecaCargando, setBibliotecaCargando] = useState(true);
   const [chatMensajes, setChatMensajes] = useState([
     { role: 'assistant', text: 'Soy Novelia. Puedo recomendarte libros modernos, explicar mis inferencias y ayudarte a elegir tu próxima lectura.' }
   ]);
@@ -28,6 +29,7 @@ const Home = () => {
 
   useEffect(() => {
     cargarPopulares();
+    cargarEstadosBiblioteca();
   }, []);
 
   const cargarPopulares = async () => {
@@ -39,6 +41,21 @@ const Home = () => {
       console.error(e);
     }
     setPopularesCargando(false);
+  };
+
+  const cargarEstadosBiblioteca = async () => {
+    setBibliotecaCargando(true);
+    try {
+      const res = await axios.get(`${API}/biblioteca`, { headers });
+      const estados = {};
+      res.data?.leyendo?.forEach(libro => { estados[libro.id] = 'leyendo'; });
+      res.data?.quiero_leer?.forEach(libro => { estados[libro.id] = 'quiero_leer'; });
+      res.data?.leidos?.forEach(libro => { estados[libro.id] = 'leido'; });
+      setEstadosGuardados(estados);
+    } catch (e) {
+      console.error(e);
+    }
+    setBibliotecaCargando(false);
   };
 
   const detectarVibe = async () => {
@@ -66,9 +83,9 @@ const Home = () => {
 
   const agregarBiblioteca = async (libro, estado) => {
     try {
-      await axios.post(`${API}/biblioteca/agregar`, { libro, estado }, { headers });
-      setMensajeGuardado(`"${libro.titulo}" agregado`);
-      setEstadosGuardados(prev => ({ ...prev, [libro.id]: estado }));
+      const res = await axios.post(`${API}/biblioteca/agregar`, { libro, estado }, { headers });
+      setMensajeGuardado(res.data?.mensaje || `"${libro.titulo}" agregado`);
+      await cargarEstadosBiblioteca();
       setLibroSeleccionado(null);
       setTimeout(() => setMensajeGuardado(''), 3000);
     } catch (e) {
@@ -100,8 +117,8 @@ const Home = () => {
   ];
 
   const vibeEmoji = {
-    melancolico: '🌧️', romantico: '🌹', misterioso: '🌙',
-    cozy: '☕', aventurero: '🗺️', oscuro: '🖤', esperanzador: '🌟'
+    melancolico: 'Mel', romantico: 'Rom', misterioso: 'Mis',
+    cozy: 'Cozy', aventurero: 'Aven', oscuro: 'Osc', esperanzador: 'Esp'
   };
 
   return (
@@ -163,7 +180,7 @@ const Home = () => {
         border: '1px solid var(--border)'
       }}>
         <p style={{ color: 'var(--accent)', fontWeight: 'bold', fontSize: '15px', marginBottom: '14px' }}>
-          ✨ ¿Qué vibe buscas hoy?
+          ¿Qué vibe buscas hoy?
         </p>
 
         {modo === 'texto' && (
@@ -209,7 +226,7 @@ const Home = () => {
           width: '100%', marginTop: '14px', opacity: cargando ? 0.7 : 1,
           transition: 'opacity 0.2s'
         }}>
-          {cargando ? '✨ Analizando vibe...' : 'Obtener recomendaciones ✨'}
+          {cargando ? 'Analizando...' : 'Obtener recomendaciones'}
         </button>
       </div>
 
@@ -218,7 +235,7 @@ const Home = () => {
           background: 'var(--bg-card)', border: '1px solid var(--accent)',
           borderRadius: '14px', padding: '12px 16px', marginBottom: '16px',
           color: 'var(--accent)', fontSize: '14px', textAlign: 'center'
-        }}>✅ {mensajeGuardado}</div>
+        }}>{mensajeGuardado}</div>
       )}
 
       <div style={{
@@ -279,7 +296,7 @@ const Home = () => {
               Vibe detectado
             </p>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-              <span style={{ fontSize: '32px' }}>{vibeEmoji[resultado.vibe?.vibe] || '✨'}</span>
+              <span style={{ fontSize: '32px' }}>{vibeEmoji[resultado.vibe?.vibe] || 'Vibe'}</span>
               <p style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--accent)', textTransform: 'capitalize' }}>
                 {resultado.vibe?.vibe}
               </p>
@@ -303,7 +320,7 @@ const Home = () => {
               padding: '16px', marginBottom: '16px', border: '1px solid var(--border)'
             }}>
               <p style={{ color: 'var(--accent)', fontWeight: 'bold', fontSize: '13px', marginBottom: '10px' }}>
-                🧠 Razonamiento del sistema
+                Razonamiento del sistema
               </p>
               {resultado.recomendaciones.inferencias.map((inf, i) => (
                 <p key={i} style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '6px' }}>• {inf}</p>
@@ -330,7 +347,7 @@ const Home = () => {
                   background: 'var(--bg-modal)', flexShrink: 0,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   color: 'var(--text-muted)', fontSize: '10px', textAlign: 'center', padding: '6px'
-                }}>📚</div>
+                }}>LIB</div>
               )}
               <div style={{ flex: 1 }}>
                 <p style={{ fontWeight: 'bold', fontSize: '15px', marginBottom: '4px', lineHeight: '1.3' }}>{libro.titulo}</p>
@@ -345,10 +362,10 @@ const Home = () => {
                 </p>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <button onClick={e => { e.stopPropagation(); agregarBiblioteca(libro, 'quiero_leer'); }} style={estadoBoton(estadosGuardados[libro.id] === 'quiero_leer')}>
-                    🔖 Quiero leer
+                    Quiero leer
                   </button>
                   <button onClick={e => { e.stopPropagation(); agregarBiblioteca(libro, 'leyendo'); }} style={estadoBoton(estadosGuardados[libro.id] === 'leyendo')}>
-                    📖 Leyendo
+                    Leyendo
                   </button>
                 </div>
               </div>
@@ -382,7 +399,7 @@ const Home = () => {
                   width: '90px', height: '130px', borderRadius: '12px',
                   background: 'var(--bg-card)', flexShrink: 0,
                   display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '32px'
-                }}>📚</div>
+                }}>LIB</div>
               )}
               <div>
                 <p style={{ fontWeight: 'bold', fontSize: '17px', marginBottom: '4px' }}>{libroSeleccionado.titulo}</p>
@@ -403,13 +420,13 @@ const Home = () => {
             </p>
             <div style={{ display: 'flex', gap: '10px' }}>
               <button onClick={() => agregarBiblioteca(libroSeleccionado, 'quiero_leer')} style={estadoBoton(estadosGuardados[libroSeleccionado.id] === 'quiero_leer')}>
-                🔖 Quiero leer
+                Quiero leer
               </button>
               <button onClick={() => agregarBiblioteca(libroSeleccionado, 'leyendo')} style={estadoBoton(estadosGuardados[libroSeleccionado.id] === 'leyendo')}>
-                📖 Leyendo
+                Leyendo
               </button>
               <button onClick={() => agregarBiblioteca(libroSeleccionado, 'leido')} style={estadoBoton(estadosGuardados[libroSeleccionado.id] === 'leido', true)}>
-                ✅ Leído
+                Leído
               </button>
             </div>
           </div>

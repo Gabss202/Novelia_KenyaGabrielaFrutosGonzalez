@@ -20,7 +20,7 @@ const Login = () => {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       });
       localStorage.setItem('token', res.data.access_token);
-      localStorage.setItem('username', form.username);
+      localStorage.setItem('username', res.data.username || form.username);
       navigate('/');
     } catch (error) {
       const detalle = error?.response?.data?.detail;
