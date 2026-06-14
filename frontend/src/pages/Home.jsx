@@ -380,19 +380,25 @@ const Home = () => {
                 <p style={{ fontWeight: '700', fontSize: '14px', marginBottom: '6px' }}>{libro.titulo}</p>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '12px', marginBottom: '10px' }}>{libro.autor}</p>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '12px', lineHeight: '1.5', marginBottom: '10px' }}>{libro.descripcion}</p>
-                {chatMostrarBotonesBiblioteca && (
-                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                    <button onClick={() => agregarBiblioteca(libro, 'quiero_leer')} style={estadoBoton(estadosGuardados[libro.id] === 'quiero_leer')}>
-                      Quiero leer
-                    </button>
-                    <button onClick={() => agregarBiblioteca(libro, 'leyendo')} style={estadoBoton(estadosGuardados[libro.id] === 'leyendo')}>
-                      Leyendo
-                    </button>
-                    <button onClick={() => agregarBiblioteca(libro, 'leido')} style={estadoBoton(estadosGuardados[libro.id] === 'leido', true)}>
-                      Leído
-                    </button>
-                  </div>
-                )}
+                <p style={{ color: 'var(--text-secondary)', fontSize: '11px', marginBottom: '10px' }}><strong>Género:</strong> {libro.genero || 'No disponible'}</p>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  <button onClick={() => setLibroSeleccionado(libro)} style={estadoBoton(false)}>
+                    Ver detalles
+                  </button>
+                  {chatMostrarBotonesBiblioteca && (
+                    <>
+                      <button onClick={() => agregarBiblioteca(libro, 'quiero_leer')} style={estadoBoton(estadosGuardados[libro.id] === 'quiero_leer')}>
+                        Quiero leer
+                      </button>
+                      <button onClick={() => agregarBiblioteca(libro, 'leyendo')} style={estadoBoton(estadosGuardados[libro.id] === 'leyendo')}>
+                        Leyendo
+                      </button>
+                      <button onClick={() => agregarBiblioteca(libro, 'leido')} style={estadoBoton(estadosGuardados[libro.id] === 'leido', true)}>
+                        Leído
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           ))}

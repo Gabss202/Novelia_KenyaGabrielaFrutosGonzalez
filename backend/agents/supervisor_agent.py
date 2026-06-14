@@ -22,8 +22,8 @@ class SupervisorAgent:
     def _detectar_intencion(self, mensaje: str) -> str:
         texto = mensaje.lower()
         reglas = [
-            ("biblioteca", ["agrega", "añade", "añadir", "mete", "pon", "mi biblioteca", "a la biblioteca", "a mi biblioteca"]),
             ("recomendacion", ["recomendaciones", "recomendación", "recomienda", "sugiere", "booktok", "qué leo", "que leo", "similar a", "parecido a", "recom", "libro"]),
+            ("biblioteca", ["agrega", "añade", "añadir", "mete", "pon", "mi biblioteca", "a la biblioteca", "a mi biblioteca"]),
             ("perfil", ["racha", "perfil", "estadísticas", "estadisticas", "nivel", "reto", "progreso"]),
             ("explicacion", ["por qué", "porque", "explica", "explicación", "regla", "inferencia"]),
             ("reseña", ["reseña", "review", "opinas", "calificación", "calificacion"]),
@@ -369,6 +369,7 @@ class SupervisorAgent:
         - una inferencia breve sobre su perfil lector si aplica;
         - una sugerencia práctica siguiente si aplica;
         - máximo 5 oraciones.
+        - el porque de la elección de tu respuesta, si es una recomendación o sugerencia.
 
         Contexto del usuario:
         {contexto}
